@@ -1,0 +1,33 @@
+# ===== Environment =====
+.env
+venv/
+.venv/
+
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ===== Generated Data =====
+Data/ChatLog.json
+Data/generated_images/
+
+# ===== IDE =====
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== Misc =====
+*.log
+*.tmp
