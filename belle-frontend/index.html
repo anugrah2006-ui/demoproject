@@ -1,0 +1,145 @@
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="BELLE.AI — AI-powered grooming & lifestyle assistant" />
+  <title>BELLE.AI</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">✦</div>
+      <span class="brand-name">BELLE<span class="brand-dot">.AI</span></span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-btn active" data-tab="chat" id="nav-chat">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>Chat</span>
+      </button>
+      <button class="nav-btn" data-tab="generate" id="nav-generate">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <span>Generate</span>
+      </button>
+      <button class="nav-btn" data-tab="analyze" id="nav-analyze">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        <span>Analyze</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="nav-btn danger" id="btn-clear-history" title="Clear chat history">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        <span>Clear History</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ========== MOBILE HEADER ========== -->
+  <header class="mobile-header" id="mobile-header">
+    <button class="hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="brand-icon-sm">✦</div>
+    <span class="brand-name-sm">BELLE<span class="brand-dot">.AI</span></span>
+  </header>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <main class="main" id="main">
+
+    <!-- ===== CHAT TAB ===== -->
+    <section class="tab-content active" id="tab-chat">
+      <div class="chat-container">
+        <div class="chat-messages" id="chat-messages">
+          <div class="welcome-message">
+            <div class="welcome-icon">✦</div>
+            <h1>Hello, I'm <span class="gradient-text">BELLE</span></h1>
+            <p>Your AI-powered grooming & lifestyle assistant. Ask me anything about fashion trends, style advice, or just chat!</p>
+            <div class="suggestion-chips">
+              <button class="chip" data-query="What hairstyle suits a round face?">💇 Hairstyle advice</button>
+              <button class="chip" data-query="Trending men's fashion 2026">🔥 Trending fashion</button>
+              <button class="chip" data-query="Best color combinations for a formal event">🎨 Color combos</button>
+              <button class="chip" data-query="How can I improve my confidence?">💪 Confidence tips</button>
+            </div>
+          </div>
+        </div>
+        <div class="chat-input-area">
+          <div class="input-wrapper">
+            <textarea id="chat-input" placeholder="Ask BELLE anything..." rows="1"></textarea>
+            <button class="send-btn" id="btn-send" title="Send message">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+          <p class="input-hint">BELLE uses AI to route your query to the best engine automatically</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== IMAGE GENERATION TAB ===== -->
+    <section class="tab-content" id="tab-generate">
+      <div class="gen-container">
+        <div class="gen-header">
+          <h1>Image <span class="gradient-text">Generator</span></h1>
+          <p>Describe what you want and BELLE will create 4 unique images for you</p>
+        </div>
+        <div class="gen-input-area">
+          <div class="input-wrapper">
+            <textarea id="gen-input" placeholder="Describe the image you want..." rows="1"></textarea>
+            <button class="send-btn" id="btn-generate" title="Generate images">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="gen-results" id="gen-results">
+          <!-- Generated images will appear here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== IMAGE ANALYSIS TAB ===== -->
+    <section class="tab-content" id="tab-analyze">
+      <div class="analyze-container">
+        <div class="analyze-header">
+          <h1>Image <span class="gradient-text">Analyzer</span></h1>
+          <p>Upload a photo and ask BELLE to analyze it for style, outfit, or grooming advice</p>
+        </div>
+        <div class="analyze-body">
+          <div class="upload-zone" id="upload-zone">
+            <input type="file" id="file-input" accept="image/*" hidden />
+            <div class="upload-placeholder" id="upload-placeholder">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <p>Drop an image here or <span class="upload-link">browse</span></p>
+              <span class="upload-hint">JPG, JPEG, PNG supported</span>
+            </div>
+            <img id="image-preview" class="image-preview hidden" alt="Preview" />
+          </div>
+          <div class="analyze-prompt-area">
+            <div class="input-wrapper">
+              <textarea id="analyze-input" placeholder="What should BELLE look for? (e.g., 'What outfit suits me?')" rows="1"></textarea>
+              <button class="send-btn" id="btn-analyze" title="Analyze image" disabled>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="analyze-result hidden" id="analyze-result">
+            <h3>BELLE's Analysis</h3>
+            <div class="result-text" id="analyze-result-text"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========== OVERLAY for mobile sidebar ========== -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
