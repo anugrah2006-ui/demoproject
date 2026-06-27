@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ivory: #FAF8F5;
+  --color-ivory-dark: #F5F0EB;
+  --color-text-primary: #1D1D1F;
+  --color-text-secondary: #6B6B6B;
+  --color-text-tertiary: #999999;
+  --color-border-subtle: #ECE8E2;
+  --color-copper: #C17D4E;
+  --color-copper-light: #D4956A;
+  --color-copper-dark: #B87040;
+  --color-rose-gold: #B87D6B;
+  --color-card-bg: #FFFFFF;
+  --color-card-shadow: rgba(0, 0, 0, 0.04);
+  --color-card-shadow-hover: rgba(0, 0, 0, 0.08);
+
+  --font-heading: "Playfair Display", "Georgia", serif;
+  --font-body: "Inter", "Helvetica Neue", "Arial", sans-serif;
+}
+
+/* Base styles */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-text-primary);
+  background-color: var(--color-ivory);
+}
+
+/* Selection styling */
+::selection {
+  background-color: var(--color-copper-light);
+  color: white;
+}
