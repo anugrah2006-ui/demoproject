@@ -4,10 +4,12 @@ export default function AuthFooter() {
   return (
     <div className="mt-8">
       <div className="text-center mb-8">
-        <span className="text-sm text-[#6E6E73] mr-1">Don't have an account?</span>
-        <a href="#" className="text-sm font-medium text-[#C98766] hover:underline decoration-1 underline-offset-4">
-          Create Account
-        </a>
+        <p className="text-center text-xs text-[#86868B]">
+          Don&apos;t have an account?{" "}
+          <a href="/signup" className="text-[#C98766] hover:underline">
+            Create Account
+          </a>
+        </p>
       </div>
 
       <div className="flex items-center justify-center gap-1.5 text-xs text-[#6E6E73]/70">

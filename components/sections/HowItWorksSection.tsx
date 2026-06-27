@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, Variants } from "motion/react";
 
 const steps = [
   {
@@ -30,8 +30,8 @@ const containerVariants = {
   show: { transition: { staggerChildren: 0.15 } },
 };
 
-const stepVariants = {
-  hidden: { opacity: 0, y: 20 },
+const stepVariants: Variants = {
+  hidden: { opacity: 0, y: 30 },
   show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
 };
 

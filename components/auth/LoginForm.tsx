@@ -2,89 +2,113 @@
 
 import { useState } from "react";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { loginWithEmail } from "@/actions/auth";
+
+const loginSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(1, "Password is required"),
+});
+
+type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [serverError, setServerError] = useState<string | null>(null);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
-    setError(null);
+    setServerError(null);
 
-    try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+    const formData = new FormData();
+    formData.append("email", data.email);
+    formData.append("password", data.password);
 
-      if (error) {
-        throw error;
-      }
-      
-      window.location.href = "/dashboard";
-    } catch (err: any) {
-      setError(err.message || "Failed to sign in. Please check your credentials.");
-    } finally {
+    const result = await loginWithEmail(formData);
+
+    if (result.error) {
+      setServerError(result.error);
       setIsLoading(false);
+    } else {
+      // Middleware will handle redirect to dashboard automatically
+      // But we can trigger a hard reload/navigation to ensure state resets
+      router.push("/dashboard");
     }
   };
 
   return (
-    <form onSubmit={handleLogin} className="flex flex-col gap-4">
-      {error && (
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+      {serverError && (
         <div className="rounded-xl bg-red-50 p-3 text-sm text-red-600">
-          {error}
+          {serverError}
         </div>
       )}
 
-      {/* Email Input */}
-      <div className="relative">
-        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-5">
-          <Mail className="h-5 w-5 text-[#6E6E73]" />
+      <div className="flex flex-col gap-1">
+        {/* Email Input */}
+        <div className="relative">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-5">
+            <Mail className="h-5 w-5 text-[#6E6E73]" />
+          </div>
+          <input
+            {...register("email")}
+            type="email"
+            placeholder="Email address"
+            className={`h-14 w-full rounded-full border bg-[#FFFDF9] pl-12 pr-5 text-[15px] text-[#1D1D1F] transition-all duration-200 placeholder:text-[#6E6E73]/60 focus:outline-none focus:ring-4 focus:ring-[#C98766]/10 ${
+              errors.email ? "border-red-300 focus:border-red-400" : "border-[#ECE8E2] focus:border-[#C98766]"
+            }`}
+          />
         </div>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          placeholder="Email address"
-          className="h-14 w-full rounded-full border border-[#ECE8E2] bg-[#FFFDF9] pl-12 pr-5 text-[15px] text-[#1D1D1F] transition-all duration-200 placeholder:text-[#6E6E73]/60 focus:border-[#C98766] focus:outline-none focus:ring-4 focus:ring-[#C98766]/10"
-        />
+        {errors.email && (
+          <span className="text-xs text-red-500 pl-4">{errors.email.message}</span>
+        )}
       </div>
 
-      {/* Password Input */}
-      <div className="relative">
-        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-5">
-          <Lock className="h-5 w-5 text-[#6E6E73]" />
+      <div className="flex flex-col gap-1">
+        {/* Password Input */}
+        <div className="relative">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-5">
+            <Lock className="h-5 w-5 text-[#6E6E73]" />
+          </div>
+          <input
+            {...register("password")}
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            className={`h-14 w-full rounded-full border bg-[#FFFDF9] pl-12 pr-12 text-[15px] text-[#1D1D1F] transition-all duration-200 placeholder:text-[#6E6E73]/60 focus:outline-none focus:ring-4 focus:ring-[#C98766]/10 ${
+              errors.password ? "border-red-300 focus:border-red-400" : "border-[#ECE8E2] focus:border-[#C98766]"
+            }`}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute inset-y-0 right-0 flex items-center pr-5 text-[#6E6E73] hover:text-[#1D1D1F] transition-colors"
+            tabIndex={-1}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+          </button>
         </div>
-        <input
-          type={showPassword ? "text" : "password"}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          placeholder="Password"
-          className="h-14 w-full rounded-full border border-[#ECE8E2] bg-[#FFFDF9] pl-12 pr-12 text-[15px] text-[#1D1D1F] transition-all duration-200 placeholder:text-[#6E6E73]/60 focus:border-[#C98766] focus:outline-none focus:ring-4 focus:ring-[#C98766]/10"
-        />
-        <button
-          type="button"
-          onClick={() => setShowPassword(!showPassword)}
-          className="absolute inset-y-0 right-0 flex items-center pr-5 text-[#6E6E73] hover:text-[#1D1D1F] transition-colors"
-          tabIndex={-1}
-          aria-label={showPassword ? "Hide password" : "Show password"}
-        >
-          {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-        </button>
+        {errors.password && (
+          <span className="text-xs text-red-500 pl-4">{errors.password.message}</span>
+        )}
       </div>
 
       {/* Forgot Password */}
-      <div className="flex justify-end pt-1 pb-4">
-        <a href="#" className="text-sm font-medium text-[#C98766] hover:underline decoration-1 underline-offset-4">
+      <div className="flex justify-end pt-0 pb-2">
+        <a href="/forgot-password" className="text-sm font-medium text-[#C98766] hover:underline decoration-1 underline-offset-4">
           Forgot Password?
         </a>
       </div>

@@ -48,7 +48,7 @@ export default function AboutSection() {
             
             <div className="space-y-6 text-lg text-text-secondary leading-relaxed">
               <p>
-                Belle is your premium AI grooming assistant, meticulously engineered to help you master skincare, hairstyle, fashion, and self-care. We believe that looking your best shouldn't require endless research or guesswork.
+                Belle is your premium AI grooming assistant, meticulously engineered to help you master skincare, hairstyle, fashion, and self-care. We believe that looking your best shouldn&apos;t require endless research or guesswork.
               </p>
               
               <div className="pt-4">
