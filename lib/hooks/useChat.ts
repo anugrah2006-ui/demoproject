@@ -46,7 +46,6 @@ export function useChat() {
           conversation_id: currentConversationId,
           role: 'user',
           content,
-          image_url: imageBase64,
         }).select('id').single();
         
         if (userMsgError) throw new Error(userMsgError.message || JSON.stringify(userMsgError));
@@ -118,16 +117,8 @@ export function useChat() {
               generatedImageUrl = imageMatch[1];
               displayChunk = chunk.replace(imageMatch[0], '');
               
-              // Automatically save generated images to combinations
-              const { error: comboError } = await supabase.from('combinations').insert({
-                user_id: user.id,
-                title: 'AI Generation',
-                image_url: generatedImageUrl,
-                type: 'image_generation',
-              });
-              if (comboError) {
-                console.error('Failed to save combination:', comboError);
-              }
+              // The combinations table doesn't exist, so we skip saving here.
+              // const { error: comboError } = await supabase.from('combinations').insert({...})
             }
 
             if (displayChunk) {
@@ -142,7 +133,6 @@ export function useChat() {
           conversation_id: currentConversationId,
           role: 'assistant',
           content: assistantContent,
-          image_url: generatedImageUrl || null,
         });
         if (asstMsgError) throw new Error(asstMsgError.message || JSON.stringify(asstMsgError));
         

@@ -5,7 +5,7 @@ import { logger } from '@/lib/logger';
 import { OrchestrationRequest, StreamChunk, ChatApiError } from '@/lib/ai/types';
 
 const REQUIRED_ENV_VARS = [
-  'XAI_API_KEY',
+  'GEMINI_MODEL',
   'GOOGLE_API_KEY',
   'HUGGINGFACE_API_KEY',
   'TAVILY_API_KEY',

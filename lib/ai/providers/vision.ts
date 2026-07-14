@@ -1,10 +1,7 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { getGeminiModel } from '../config';
 import { VISION_ANALYSIS_PROMPT } from '../prompts';
 import { logger } from '../../logger';
 import { ChatApiError } from '../types';
-
-const apiKey = process.env.GOOGLE_API_KEY || '';
-const genAI = new GoogleGenerativeAI(apiKey);
 
 export async function analyzeImage(imageBase64: string, mimeType: string, prompt: string): Promise<string> {
   const startTime = Date.now();
@@ -13,8 +10,8 @@ export async function analyzeImage(imageBase64: string, mimeType: string, prompt
   }
   logger.info('[CHAT] Provider API Request Started', { provider: 'gemini-vision' });
   try {
-    // We use gemini-2.5-flash for vision tasks as well, as it's the recommended multimodal model
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    // We use getGeminiModel which provides the centrally configured model
+    const model = getGeminiModel();
     
     const imagePart = {
       inlineData: {

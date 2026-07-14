@@ -1,10 +1,8 @@
-import { GoogleGenerativeAI, Schema, SchemaType } from '@google/generative-ai';
+import { Schema, SchemaType } from '@google/generative-ai';
 import { ROUTER_SYSTEM_PROMPT } from '../prompts';
 import { logger } from '../../logger';
 import { RouterResponse, ChatApiError } from '../types';
-
-const apiKey = process.env.GOOGLE_API_KEY || '';
-const genAI = new GoogleGenerativeAI(apiKey);
+import { getGeminiModel } from '../config';
 
 const routerSchema: Schema = {
   type: SchemaType.OBJECT,
@@ -22,7 +20,7 @@ const routerSchema: Schema = {
       items: {
         type: SchemaType.STRING,
       },
-      description: "List of recommended tools to satisfy this intent (e.g., 'vision', 'grok', 'image', 'search', 'trends')",
+      description: "List of recommended tools to satisfy this intent (e.g., 'vision', 'gemini', 'image', 'search', 'trends')",
     },
   },
   required: ['intent', 'confidence', 'tools'],
@@ -35,13 +33,9 @@ export async function determineIntent(message: string): Promise<RouterResponse> 
   }
   logger.info('[CHAT] Provider API Request Started', { provider: 'gemini-router' });
   try {
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-2.5-flash',
-      systemInstruction: ROUTER_SYSTEM_PROMPT,
-      generationConfig: {
+    const model = getGeminiModel(ROUTER_SYSTEM_PROMPT, {
         responseMimeType: 'application/json',
         responseSchema: routerSchema,
-      },
     });
 
     const result = await model.generateContent(message);

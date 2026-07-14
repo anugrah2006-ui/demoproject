@@ -1,5 +1,5 @@
 import { determineIntent } from './router/router';
-import { stream } from './providers/grok';
+import { stream } from './providers/gemini';
 import { analyzeImage } from './providers/vision';
 import { generateImage } from './providers/image';
 import { searchWeb } from './providers/search';
@@ -50,7 +50,7 @@ export async function processRequest(request: OrchestrationRequest): Promise<Orc
       }
     }
 
-    // 4. Formulate Final Response with Grok
+    // 4. Formulate Final Response with Gemini
     let finalUserMessage = `User Message: ${request.message}`;
     
     if (Object.keys(memory.preferences).length > 0) {
