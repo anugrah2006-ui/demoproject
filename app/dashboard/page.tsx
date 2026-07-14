@@ -1,32 +1,32 @@
 import { createClient } from "@/lib/supabase/server";
-import BelleOrb from "@/components/dashboard/BelleOrb";
-import Greeting from "@/components/dashboard/Greeting";
-import PromptBox from "@/components/dashboard/PromptBox";
-import SuggestionPills from "@/components/dashboard/SuggestionPills";
-import RecentChats from "@/components/dashboard/RecentChats";
+import DashboardContent from "@/components/dashboard/DashboardContent";
+import { PageFadeIn } from "@/components/dashboard/EntranceAnimations";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  // In a real implementation, we would fetch actual chats from the database
-  const mockChats: { id: string; title: string; date: string }[] = []; // Leaving empty to show the elegant EmptyState as requested
+  let recentConversations: { id: string, title: string, date: string }[] = [];
+  if (user) {
+    const { data } = await supabase
+      .from('conversations')
+      .select('id, title, created_at')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(3);
+    
+    if (data) {
+      recentConversations = data.map(c => ({
+        id: c.id,
+        title: c.title,
+        date: new Date(c.created_at).toLocaleDateString(),
+      }));
+    }
+  }
 
   return (
-    <div className="flex-1 flex flex-col pt-10 pb-20 px-6 lg:px-10 overflow-y-auto">
-      <div className="flex-1 flex flex-col justify-center items-center w-full max-w-[1000px] mx-auto min-h-[500px]">
-        <div className="w-full mb-8">
-          <BelleOrb />
-          <Greeting user={user} />
-        </div>
-        
-        <div className="w-full">
-          <PromptBox />
-          <SuggestionPills />
-        </div>
-      </div>
-
-      <RecentChats chats={mockChats} />
-    </div>
+    <PageFadeIn className="flex-1 flex flex-col h-full">
+      <DashboardContent user={user} recentConversations={recentConversations} />
+    </PageFadeIn>
   );
 }

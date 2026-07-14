@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { motion } from "motion/react";
 import { MessageSquare, Clock, Layers, CreditCard, Settings, LogOut } from "lucide-react";
 import { User } from "@supabase/supabase-js";
 
@@ -21,7 +22,12 @@ export default function Sidebar({ user }: SidebarProps) {
   ];
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-50 w-[280px] bg-[#FFFDF9] border-r border-[#ECE8E2] flex flex-col hidden lg:flex">
+    <motion.aside 
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+      className="fixed inset-y-0 left-0 z-50 w-[280px] bg-[#FFFDF9] border-r border-[#ECE8E2] flex flex-col hidden lg:flex"
+    >
       {/* Top Logo */}
       <div className="h-[96px] flex items-center px-8 border-b border-[#ECE8E2]/50">
         <Link href="/dashboard" className="font-heading text-3xl text-[#C98766] tracking-tight">
@@ -77,6 +83,6 @@ export default function Sidebar({ user }: SidebarProps) {
           </form>
         </div>
       </div>
-    </aside>
+    </motion.aside>
   );
 }

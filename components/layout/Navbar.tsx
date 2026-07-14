@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { useAuthNavigation } from "@/hooks/useAuthNavigation";
+import AuthLoadingOverlay from "@/components/auth/AuthLoadingOverlay";
 
 const navLinks = [
   { name: "Features", href: "#features" },
@@ -15,6 +17,7 @@ const navLinks = [
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
+  const { navigateWithAuthCheck, isChecking } = useAuthNavigation();
 
   // Handle smooth scrolling
   const handleScroll = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, href: string) => {
@@ -52,8 +55,9 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-[#FFFDF9] border-b border-[rgba(0,0,0,0.05)] transition-colors duration-300">
-      <nav
+    <>
+      <header className="sticky top-0 z-50 w-full bg-[#FFFDF9] border-b border-[rgba(0,0,0,0.05)] transition-colors duration-300">
+        <nav
         className="mx-auto flex h-[88px] md:h-[96px] max-w-[1400px] items-center justify-between px-5 md:px-8 lg:px-12"
         role="navigation"
         aria-label="Main navigation"
@@ -98,20 +102,21 @@ export default function Navbar() {
 
         {/* Right: Actions */}
         <div className="flex items-center gap-6">
-          <Link
-            href="#login"
+          <button
+            type="button"
+            onClick={navigateWithAuthCheck}
             className="hidden md:block text-base font-medium text-[#2A2A2A] transition-colors duration-250 hover:text-[#C98766]"
           >
             Log in
-          </Link>
+          </button>
           
-          <Link
-            href="#get-started"
-            onClick={(e) => handleScroll(e, "#get-started")}
+          <button
+            type="button"
+            onClick={navigateWithAuthCheck}
             className="flex h-[48px] md:h-[52px] items-center justify-center rounded-full bg-gradient-to-r from-[#C98766] to-[#B87554] px-7 md:px-8 text-base font-medium text-white shadow-[0_4px_16px_rgba(201,135,102,0.25)] transition-all duration-250 hover:scale-[1.02] hover:from-[#B87554] hover:to-[#A76343] hover:shadow-[0_6px_24px_rgba(201,135,102,0.35)]"
           >
             Get Started
-          </Link>
+          </button>
 
           {/* Mobile Hamburger Toggle */}
           <button
@@ -153,18 +158,23 @@ export default function Navbar() {
                 );
               })}
               <div className="mt-4 pt-4 border-t border-[rgba(0,0,0,0.05)]">
-                 <Link
-                  href="#login"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-lg font-medium text-[#2A2A2A] hover:text-[#C98766]"
+                 <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    navigateWithAuthCheck();
+                  }}
+                  className="text-lg font-medium text-[#2A2A2A] hover:text-[#C98766] text-left w-full"
                 >
                   Log in
-                </Link>
+                </button>
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
     </header>
+      <AuthLoadingOverlay isVisible={isChecking} />
+    </>
   );
 }

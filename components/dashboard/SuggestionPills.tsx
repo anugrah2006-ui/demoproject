@@ -6,7 +6,7 @@ export default function SuggestionPills() {
   ];
 
   return (
-    <div className="flex flex-wrap justify-center gap-3 mt-6">
+    <div className="flex flex-wrap justify-center gap-3 mt-5">
       {suggestions.map((suggestion) => (
         <button
           key={suggestion.text}
