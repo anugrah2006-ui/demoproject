@@ -7,7 +7,7 @@ export async function GET() {
   
   try {
     const result = await processRequest({
-      userId: 'debug-user',
+      userId: '00000000-0000-0000-0000-000000000000',
       message: 'Hello',
       history: [],
     });

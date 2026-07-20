@@ -42,10 +42,12 @@ export function useChat() {
         }
 
         // 2. Add user message locally and to Supabase
+        const userImage = imageBase64 ? `data:${mimeType || 'image/jpeg'};base64,${imageBase64}` : null;
         const { data: newUserMsg, error: userMsgError } = await supabase.from('messages').insert({
           conversation_id: currentConversationId,
           role: 'user',
           content,
+          image_url: userImage,
         }).select('id').single();
         
         if (userMsgError) throw new Error(userMsgError.message || JSON.stringify(userMsgError));
@@ -56,7 +58,7 @@ export function useChat() {
           id: userMessageId,
           role: 'user',
           content,
-          imageUrl: imageBase64,
+          imageUrl: userImage,
           createdAt: new Date(),
         });
 
@@ -101,6 +103,8 @@ export function useChat() {
         const decoder = new TextDecoder();
         let assistantContent = '';
         let generatedImageUrl = '';
+        let buffer = '';
+        let metaProcessed = false;
 
         if (reader) {
           while (true) {
@@ -109,21 +113,56 @@ export function useChat() {
 
             const chunk = decoder.decode(value, { stream: true });
             
-            // Handle meta image tag if it exists
-            const imageMatch = chunk.match(/\[META:IMAGE=(.*?)\]\n/);
-            let displayChunk = chunk;
-            
-            if (imageMatch) {
-              generatedImageUrl = imageMatch[1];
-              displayChunk = chunk.replace(imageMatch[0], '');
+            if (!metaProcessed) {
+              buffer += chunk;
               
-              // The combinations table doesn't exist, so we skip saving here.
-              // const { error: comboError } = await supabase.from('combinations').insert({...})
-            }
-
-            if (displayChunk) {
-              assistantContent += displayChunk;
-              updateLastMessage(displayChunk, true, generatedImageUrl || undefined);
+              if (buffer.startsWith('[META:IMAGE=')) {
+                const closingIndex = buffer.indexOf(']\n');
+                if (closingIndex !== -1) {
+                  // Found the complete meta tag!
+                  const metaTag = buffer.substring(0, closingIndex + 2); // includes ]\n
+                  const imageMatch = metaTag.match(/\[META:IMAGE=(.*?)\]\n/);
+                  if (imageMatch) {
+                    generatedImageUrl = imageMatch[1];
+                    
+                    // Save to combinations
+                    await supabase.from('combinations').insert({
+                      user_id: user.id,
+                      title: content.substring(0, 30) || 'AI Generated Image',
+                      image_url: generatedImageUrl,
+                      type: 'image_generation',
+                    });
+                  }
+                  
+                  // The rest of the buffer is normal display content
+                  const displayChunk = buffer.substring(closingIndex + 2);
+                  buffer = '';
+                  metaProcessed = true;
+                  
+                  if (displayChunk) {
+                    assistantContent += displayChunk;
+                    updateLastMessage(displayChunk, true, generatedImageUrl || undefined);
+                  }
+                } else {
+                  // Incomplete meta tag, wait for more chunks
+                  continue;
+                }
+              } else {
+                // No meta tag at the beginning
+                metaProcessed = true;
+                const displayChunk = buffer;
+                buffer = '';
+                if (displayChunk) {
+                  assistantContent += displayChunk;
+                  updateLastMessage(displayChunk, true);
+                }
+              }
+            } else {
+              // Meta tag already processed, proceed normally
+              if (chunk) {
+                assistantContent += chunk;
+                updateLastMessage(chunk, true, generatedImageUrl || undefined);
+              }
             }
           }
         }
@@ -133,6 +172,7 @@ export function useChat() {
           conversation_id: currentConversationId,
           role: 'assistant',
           content: assistantContent,
+          image_url: generatedImageUrl || null,
         });
         if (asstMsgError) throw new Error(asstMsgError.message || JSON.stringify(asstMsgError));
         
