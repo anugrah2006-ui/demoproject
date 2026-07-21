@@ -1,33 +1,41 @@
-# ===== Environment =====
-.env
-venv/
-.venv/
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# ===== Python =====
-__pycache__/
-*.py[cod]
-*.pyo
-*.egg-info/
-dist/
-build/
-*.egg
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
 
-# ===== Generated Data =====
-Data/ChatLog.json
-Data/generated_images/
+# testing
+/coverage
 
-# ===== IDE =====
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
+# next.js
+/.next/
+/out/
 
-# ===== OS =====
+# production
+/build
+
+# misc
 .DS_Store
-Thumbs.db
-desktop.ini
+*.pem
 
-# ===== Misc =====
-*.log
-*.tmp
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
