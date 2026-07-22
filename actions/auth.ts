@@ -1,10 +1,21 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import {
+  logAuthError,
+  logAuthInfo,
+  summarizeAuthError,
+  summarizeSession,
+  summarizeUser,
+} from "@/lib/auth/debug";
+import { getSiteUrl, buildAbsoluteUrl } from "@/lib/auth/urls";
+import { ensureUserProfile } from "@/lib/auth/profile";
 
 export async function loginWithEmail(formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
+
+  logAuthInfo("email-login", "Starting email/password sign-in", { email });
 
   const supabase = await createClient();
   const { error, data } = await supabase.auth.signInWithPassword({
@@ -13,28 +24,19 @@ export async function loginWithEmail(formData: FormData) {
   });
 
   if (error) {
+    logAuthError("email-login", "Email/password sign-in failed", {
+      email,
+      error: summarizeAuthError(error),
+    });
     return { error: error.message };
   }
 
   if (data.user) {
-    const user = data.user;
-    
-    const { data: existingProfile } = await supabase
-      .from("profiles")
-      .select("id")
-      .eq("id", user.id)
-      .single();
-
-    if (!existingProfile) {
-      await supabase.from("profiles").insert({
-        id: user.id,
-        email: user.email,
-        full_name: user.user_metadata?.full_name || null,
-        avatar_url: user.user_metadata?.avatar_url || null,
-        onboarding_completed: false,
-        subscription: "free",
-      });
-    }
+    logAuthInfo("email-login", "Email/password sign-in succeeded", {
+      user: summarizeUser(data.user),
+      session: summarizeSession(data.session ?? null),
+    });
+    await ensureUserProfile(supabase, data.user, "email-login");
   }
 
   return { success: true };
@@ -44,6 +46,8 @@ export async function signupWithEmail(formData: FormData) {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const fullName = formData.get("fullName") as string;
+
+  logAuthInfo("email-signup", "Starting email signup", { email });
 
   const supabase = await createClient();
   
@@ -59,23 +63,46 @@ export async function signupWithEmail(formData: FormData) {
   });
 
   if (error) {
+    logAuthError("email-signup", "Email signup failed", {
+      email,
+      error: summarizeAuthError(error),
+    });
     return { error: error.message };
   }
+
+  logAuthInfo("email-signup", "Email signup completed", {
+    email,
+    fullName,
+  });
   return { success: true };
 }
 
 export async function resetPasswordRequest(formData: FormData) {
   const email = formData.get("email") as string;
   const supabase = await createClient();
+  const redirectTo = buildAbsoluteUrl("/reset-password", getSiteUrl());
+
+  logAuthInfo("reset-password", "Starting password reset request", {
+    email,
+    redirectTo,
+  });
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    // We assume the reset-password page will live here
-    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/reset-password`,
+    redirectTo,
   });
 
   if (error) {
+    logAuthError("reset-password", "Password reset request failed", {
+      email,
+      error: summarizeAuthError(error),
+    });
     return { error: error.message };
   }
+
+  logAuthInfo("reset-password", "Password reset email requested successfully", {
+    email,
+    redirectTo,
+  });
   return { success: true };
 }
 
@@ -83,12 +110,21 @@ export async function updatePassword(formData: FormData) {
   const password = formData.get("password") as string;
   const supabase = await createClient();
 
+  logAuthInfo("update-password", "Starting password update", {
+    passwordLength: password?.length ?? 0,
+  });
+
   const { error } = await supabase.auth.updateUser({
     password,
   });
 
   if (error) {
+    logAuthError("update-password", "Password update failed", {
+      error: summarizeAuthError(error),
+    });
     return { error: error.message };
   }
+
+  logAuthInfo("update-password", "Password updated successfully");
   return { success: true };
 }

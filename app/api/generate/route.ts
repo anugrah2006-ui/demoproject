@@ -3,11 +3,16 @@ import { processRequest } from '@/lib/ai/orchestrator';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/logger';
 import { OrchestrationRequest, StreamChunk } from '@/lib/ai/types';
+import { getUserWithTrace } from '@/lib/supabase/auth-reads';
 
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await getUserWithTrace(supabase, 'api-generate-route', {
+      pathname: '/api/generate',
+    });
     
     if (!user) {
       return new Response(JSON.stringify({ success: false, error: 'Unauthorized', details: 'User not authenticated' }), { status: 401, headers: { 'Content-Type': 'application/json' } });

@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { logAuthError, logAuthInfo, summarizeAuthError } from "@/lib/auth/debug";
+
+const GOOGLE_AUTH_SCOPES = "email profile";
 
 export default function GoogleButton() {
   const [isLoading, setIsLoading] = useState(false);
@@ -10,15 +13,31 @@ export default function GoogleButton() {
     try {
       setIsLoading(true);
       const supabase = createClient();
+      const callbackUrl = new URL("/auth/callback", window.location.origin);
+      callbackUrl.searchParams.set("next", "/dashboard");
+
+      logAuthInfo("google-oauth", "Starting Google OAuth sign-in", {
+        redirectTo: callbackUrl.toString(),
+        currentPath: window.location.pathname,
+        scopes: GOOGLE_AUTH_SCOPES,
+      });
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: callbackUrl.toString(),
+          scopes: GOOGLE_AUTH_SCOPES,
+          queryParams: {
+            prompt: "select_account",
+          },
         },
       });
+
       if (error) throw error;
     } catch (error) {
-      console.error("Error logging in with Google", error);
+      logAuthError("google-oauth", "Error logging in with Google", {
+        error: summarizeAuthError(error),
+      });
     } finally {
       setIsLoading(false);
     }

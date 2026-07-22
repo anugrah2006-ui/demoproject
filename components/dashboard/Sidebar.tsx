@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
 import { MessageSquare, Clock, Layers, CreditCard, Settings, LogOut } from "lucide-react";
 import { User } from "@supabase/supabase-js";
+import BelleLogo from "@/components/brand/BelleLogo";
 
 interface SidebarProps {
   user: User | null;
@@ -30,8 +31,8 @@ export default function Sidebar({ user }: SidebarProps) {
     >
       {/* Top Logo */}
       <div className="h-[96px] flex items-center px-8 border-b border-[#ECE8E2]/50">
-        <Link href="/dashboard" className="font-heading text-3xl text-[#C98766] tracking-tight">
-          Belle
+        <Link href="/dashboard" className="inline-block">
+          <BelleLogo size={36} />
         </Link>
       </div>
 

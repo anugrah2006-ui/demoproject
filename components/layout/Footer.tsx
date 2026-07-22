@@ -1,4 +1,5 @@
 import Link from "next/link";
+import BelleLogo from "@/components/brand/BelleLogo";
 
 const quickLinks = [
   { name: "Features", href: "#features" },
@@ -58,9 +59,9 @@ export default function Footer() {
           <div className="md:col-span-4 lg:col-span-5">
             <Link
               href="/"
-              className="inline-block font-heading text-4xl font-medium tracking-tight text-[#C98766] mb-6"
+              className="inline-block mb-6"
             >
-              Belle
+              <BelleLogo size={44} />
             </Link>
             <p className="text-text-secondary max-w-sm leading-relaxed">
               Your personal AI grooming assistant. Elevate your daily routine with intelligent, personalized advice for skincare, fashion, and grooming.

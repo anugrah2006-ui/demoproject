@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
+import { AuthProvider } from "@/components/providers/AuthProvider";
 import "./globals.css";
 
 const playfairDisplay = Playfair_Display({
@@ -26,6 +27,14 @@ export const metadata: Metadata = {
     "style advice",
     "personal grooming",
   ],
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon.png", type: "image/png" },
+    ],
+    shortcut: "/icon.svg",
+    apple: "/icon.png",
+  },
   openGraph: {
     title: "Belle — Your Personal AI Grooming Assistant",
     description:
@@ -42,7 +51,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${playfairDisplay.variable} ${inter.variable}`}>
       <body className="bg-ivory text-text-primary antialiased">
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

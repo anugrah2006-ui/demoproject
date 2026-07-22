@@ -1,9 +1,14 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import { getUserWithTrace } from "@/lib/supabase/auth-reads";
 
 export default async function HistoryPage() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await getUserWithTrace(supabase, "dashboard-history-page", {
+    pathname: "/dashboard/history",
+  });
 
   const todayConversations: { id: string, title: string, created_at: string }[] = [];
   const earlierConversations: { id: string, title: string, created_at: string }[] = [];

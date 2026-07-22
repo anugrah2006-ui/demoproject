@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { getSessionWithTrace } from "@/lib/supabase/auth-reads";
+import { logAuthError, summarizeAuthError } from "@/lib/auth/debug";
 
 export function useAuthNavigation() {
   const [isChecking, setIsChecking] = useState(false);
@@ -18,7 +20,9 @@ export function useAuthNavigation() {
     try {
       const {
         data: { session },
-      } = await supabase.auth.getSession();
+      } = await getSessionWithTrace(supabase, "use-auth-navigation", {
+        pathname: window.location.pathname,
+      });
 
       if (session) {
         // If authenticated, go straight to dashboard
@@ -28,7 +32,10 @@ export function useAuthNavigation() {
         router.push("/login");
       }
     } catch (error) {
-      console.error("Auth check failed:", error);
+      logAuthError("use-auth-navigation", "Auth check failed", {
+        pathname: window.location.pathname,
+        error: summarizeAuthError(error),
+      });
       // Fallback to login on error
       router.push("/login");
     } finally {
