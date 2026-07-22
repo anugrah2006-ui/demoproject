@@ -32,7 +32,7 @@ export default function Sidebar({ user }: SidebarProps) {
       {/* Top Logo */}
       <div className="h-[96px] flex items-center px-8 border-b border-[#ECE8E2]/50">
         <Link href="/dashboard" className="inline-block">
-          <BelleLogo size={36} />
+          <BelleLogo size={42} />
         </Link>
       </div>
 
