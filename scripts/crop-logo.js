@@ -1,6 +1,5 @@
 const fs = require("fs");
 const path = require("path");
-const zlib = require("zlib");
 
 const root = path.join(__dirname, "..");
 const brainDir = "C:\\Users\\Pratham\\.gemini\\antigravity-ide\\brain\\a3cc9b83-bb25-49b7-bcef-b1b0e522b150";
