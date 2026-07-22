@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useChatStore } from '@/store/chatStore';
 import { createClient } from '@/lib/supabase/client';
+import { getUserWithTrace } from '@/lib/supabase/auth-reads';
 
 export function useChat() {
   const {
@@ -23,7 +24,12 @@ export function useChat() {
       setError(null);
 
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: { user },
+        } = await getUserWithTrace(supabase, 'use-chat', {
+          stage: 'send-message',
+          conversationId,
+        });
         if (!user) throw new Error('Unauthorized');
 
         let currentConversationId = conversationId;

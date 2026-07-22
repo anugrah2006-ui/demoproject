@@ -2,11 +2,16 @@ import { NextResponse } from 'next/server';
 import { getTrendingFashion, getTrendingHairstyles, getTrendingSkincare, refreshTrendCache } from '@/lib/ai/trends';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/logger';
+import { getUserWithTrace } from '@/lib/supabase/auth-reads';
 
 export async function GET() {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await getUserWithTrace(supabase, 'api-trends-route', {
+      pathname: '/api/trends',
+    });
     
     if (!user) {
       return new NextResponse(JSON.stringify({ success: false, error: 'Unauthorized', details: 'User not authenticated' }), { status: 401, headers: { 'Content-Type': 'application/json' } });

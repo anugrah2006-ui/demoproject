@@ -1,10 +1,15 @@
 import { createClient } from "@/lib/supabase/server";
+import { getUserWithTrace } from "@/lib/supabase/auth-reads";
 import DashboardContent from "@/components/dashboard/DashboardContent";
 import { PageFadeIn } from "@/components/dashboard/EntranceAnimations";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await getUserWithTrace(supabase, "dashboard-page", {
+    pathname: "/dashboard",
+  });
 
   let recentConversations: { id: string, title: string, date: string }[] = [];
   if (user) {

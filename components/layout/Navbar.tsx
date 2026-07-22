@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useAuthNavigation } from "@/hooks/useAuthNavigation";
 import AuthLoadingOverlay from "@/components/auth/AuthLoadingOverlay";
+import BelleLogo from "@/components/brand/BelleLogo";
 
 const navLinks = [
   { name: "Features", href: "#features" },
@@ -74,10 +75,9 @@ export default function Navbar() {
                window.scrollTo({ top: 0, behavior: "smooth" });
                setActiveSection("");
             }}
-            className="font-heading text-[40px] md:text-[48px] font-medium leading-none tracking-tight text-[#C98766]"
             aria-label="Belle home"
           >
-            Belle
+            <BelleLogo size={42} />
           </Link>
         </div>
 

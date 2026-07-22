@@ -3,6 +3,7 @@ import { processRequest } from '@/lib/ai/orchestrator';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/logger';
 import { OrchestrationRequest, StreamChunk, ChatApiError } from '@/lib/ai/types';
+import { getUserWithTrace } from '@/lib/supabase/auth-reads';
 
 const REQUIRED_ENV_VARS = [
   'GEMINI_MODEL',
@@ -28,7 +29,11 @@ export async function POST(req: NextRequest) {
     }
 
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await getUserWithTrace(supabase, 'api-chat-route', {
+      pathname: '/api/chat',
+    });
     
     if (!user) {
       return new Response(JSON.stringify({ success: false, error: 'Unauthorized', details: 'User not authenticated' }), { status: 401, headers: { 'Content-Type': 'application/json' } });

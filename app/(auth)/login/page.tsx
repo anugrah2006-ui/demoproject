@@ -1,10 +1,72 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect, useMemo, useSyncExternalStore } from "react";
 import { motion } from "motion/react";
 import AuthCard from "@/components/auth/AuthCard";
+import { logAuthWarn } from "@/lib/auth/debug";
+
+type OAuthErrorDetails = {
+  error: string | null;
+  errorCode: string | null;
+  errorDescription: string | null;
+  query: string;
+  hash: string;
+};
+
+function readOAuthErrorFromLocation(): OAuthErrorDetails | null {
+  if (typeof window === "undefined") return null;
+
+  const params = new URLSearchParams(window.location.search);
+  const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+
+  const error = params.get("error") ?? hashParams.get("error");
+  const errorCode = params.get("error_code") ?? hashParams.get("error_code");
+  const errorDescription =
+    params.get("error_description") ?? hashParams.get("error_description");
+
+  if (!error && !errorCode && !errorDescription) return null;
+
+  return {
+    error,
+    errorCode,
+    errorDescription,
+    query: window.location.search,
+    hash: window.location.hash,
+  };
+}
+
+function getOAuthErrorSnapshot() {
+  const oauthError = readOAuthErrorFromLocation();
+  return oauthError ? JSON.stringify(oauthError) : "";
+}
+
+function subscribeToLocation() {
+  return () => {};
+}
 
 export default function LoginPage() {
+  const oauthErrorSnapshot = useSyncExternalStore(
+    subscribeToLocation,
+    getOAuthErrorSnapshot,
+    () => ""
+  );
+  const oauthError = useMemo<OAuthErrorDetails | null>(() => {
+    if (!oauthErrorSnapshot) return null;
+
+    try {
+      return JSON.parse(oauthErrorSnapshot) as OAuthErrorDetails;
+    } catch {
+      return null;
+    }
+  }, [oauthErrorSnapshot]);
+
+  useEffect(() => {
+    if (oauthError) {
+      logAuthWarn("login-page", "Login page loaded with OAuth error", oauthError);
+    }
+  }, [oauthError]);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -53,7 +115,20 @@ export default function LoginPage() {
 
         {/* Right Section (Auth Card) */}
         <div className="w-full flex justify-center lg:justify-end lg:pr-8 xl:pr-16">
-          <AuthCard />
+          <div className="w-full max-w-[460px]">
+            {oauthError && (
+              <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                <p className="font-medium">Google sign-in failed.</p>
+                <p className="mt-1">
+                  {oauthError.errorDescription ??
+                    oauthError.errorCode ??
+                    oauthError.error ??
+                    "Supabase returned an OAuth error."}
+                </p>
+              </div>
+            )}
+            <AuthCard />
+          </div>
         </div>
 
       </div>

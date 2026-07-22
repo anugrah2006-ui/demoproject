@@ -1,10 +1,15 @@
 import { Heart, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
+import { getUserWithTrace } from "@/lib/supabase/auth-reads";
 
 export default async function CombinationsPage() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await getUserWithTrace(supabase, "dashboard-combinations-page", {
+    pathname: "/dashboard/combinations",
+  });
 
   let combos: { id: string, title: string, created_at: string, image_url: string | null }[] = [];
   if (user) {

@@ -1,8 +1,14 @@
 import { createClient } from "@/lib/supabase/server";
+import { getUserWithTrace } from "@/lib/supabase/auth-reads";
 
 export default async function TestAuthPage() {
   const supabase = await createClient();
-  const { data: { user }, error } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error,
+  } = await getUserWithTrace(supabase, "test-auth-page", {
+    pathname: "/test-auth",
+  });
 
   return (
     <div className="min-h-screen bg-[#FFFDF9] flex flex-col items-center justify-center p-6 text-[#1D1D1F]">

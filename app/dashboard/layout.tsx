@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getUserWithTrace } from "@/lib/supabase/auth-reads";
 import { redirect } from "next/navigation";
 import Sidebar from "@/components/dashboard/Sidebar";
 import Topbar from "@/components/dashboard/Topbar";
@@ -9,7 +10,11 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await getUserWithTrace(supabase, "dashboard-layout", {
+    pathname: "/dashboard",
+  });
 
   if (!user) {
     redirect("/login");

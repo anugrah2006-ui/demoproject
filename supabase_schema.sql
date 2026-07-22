@@ -15,9 +15,11 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 -- RLS for Profiles
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view and edit their own profile" ON public.profiles;
 CREATE POLICY "Users can view and edit their own profile" 
   ON public.profiles FOR ALL 
-  USING (auth.uid() = id);
+  USING (auth.uid() = id)
+  WITH CHECK (auth.uid() = id);
 
 -- 2. Conversations Table
 CREATE TABLE IF NOT EXISTS public.conversations (
