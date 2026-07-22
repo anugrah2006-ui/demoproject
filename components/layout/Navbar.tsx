@@ -65,9 +65,6 @@ export default function Navbar() {
       >
         {/* Left: Logo */}
         <div className="relative flex items-center">
-          {/* Champagne radial glow */}
-          <div className="absolute left-1/2 top-1/2 -z-10 h-16 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#E5D5C1] opacity-70 blur-xl" />
-          
           <Link
             href="#"
             onClick={(e) => {
@@ -77,7 +74,7 @@ export default function Navbar() {
             }}
             aria-label="Belle home"
           >
-            <BelleLogo size={42} />
+            <BelleLogo size={48} />
           </Link>
         </div>
 

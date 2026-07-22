@@ -61,7 +61,7 @@ export default function Footer() {
               href="/"
               className="inline-block mb-6"
             >
-              <BelleLogo size={44} />
+              <BelleLogo size={50} />
             </Link>
             <p className="text-text-secondary max-w-sm leading-relaxed">
               Your personal AI grooming assistant. Elevate your daily routine with intelligent, personalized advice for skincare, fashion, and grooming.
