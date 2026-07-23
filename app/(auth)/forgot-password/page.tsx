@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import { motion } from "motion/react";
-import ResetPasswordForm from "@/components/auth/ResetPasswordForm";
+import ForgotPasswordForm from "@/components/auth/ForgotPasswordForm";
 
-export default function ResetPasswordPage() {
+export default function ForgotPasswordPage() {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -40,11 +40,11 @@ export default function ResetPasswordPage() {
           </motion.div>
 
           <h1 className="font-heading text-4xl md:text-5xl font-light tracking-tight text-[#1D1D1F] mb-4">
-            Set New Password
+            Reset Password
           </h1>
 
           <p className="text-[#6E6E73] text-lg leading-relaxed max-w-[420px]">
-            Enter your new password below to secure your account.
+            We will send a password reset link to your email address.
           </p>
         </div>
 
@@ -58,14 +58,14 @@ export default function ResetPasswordPage() {
           >
             <div className="mb-8 text-center">
               <h2 className="font-heading text-3xl font-medium tracking-tight text-[#1D1D1F] mb-3">
-                New Password
+                Forgot Password
               </h2>
               <p className="text-[#6E6E73] text-sm leading-relaxed">
-                Choose a strong password for your account.
+                Enter the email associated with your account.
               </p>
             </div>
 
-            <ResetPasswordForm />
+            <ForgotPasswordForm />
 
             <div className="mt-8 text-center">
               <a href="/login" className="text-sm font-medium text-[#C98766] hover:underline decoration-1 underline-offset-4">
